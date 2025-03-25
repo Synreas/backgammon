@@ -43,25 +43,34 @@ for i in range(2):
 	x_checkers.append(Checker(points[23], "X"))
 	o_checkers.append(Checker(points[0], "O"))
 
-player1 = Player("Player 1", x_checkers)
-player2 = Player("Player 2", o_checkers)
-board = Board(points, player1.get_name(), player2.get_name())
+bar1 = Bar("X")
+bar2 = Bar("O")
+player1 = Player("Player 1", x_checkers, points, bar1)
+player2 = Player("Player 2", o_checkers, points, bar2)
+board = Board(points, player1.get_name(), player2.get_name(), bar1, bar2)
+player1.set_board(board)
+player2.set_board(board)
 dice1 = Dice()
 dice2 = Dice()
-board.clear()
-board.print()
+
+
 
 moves = []
 
-moves.append(dice1.dice())
-moves.append(dice2.dice())
-if moves[0] < moves[1]:
-	moves[0], moves[1] = moves[1], moves[0]
-elif moves[0] == moves[1]:
-	moves.append(moves[0])
-	moves.append(moves[0])
-print(moves)
-player1.play(moves)
+def dice_twice():
+	moves.append(dice1.dice())
+	moves.append(dice2.dice())
+	if moves[0] < moves[1]:
+		moves[0], moves[1] = moves[1], moves[0]
+	elif moves[0] == moves[1]:
+		moves.append(moves[0])
+		moves.append(moves[0])
 
-board.clear()
-board.print()
+while not board.is_finished():
+	dice_twice()
+	board.refresh(moves)
+	player1.play(moves)
+	dice_twice()
+	board.refresh(moves)
+	player2.play(moves)
+
